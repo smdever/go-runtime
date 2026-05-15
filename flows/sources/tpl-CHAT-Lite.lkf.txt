@@ -1,0 +1,131 @@
+{
+  "Conversation": {
+    "Information": {
+      "Title": "LOKIPAI CHAT-Lite",
+      "Version": "1.0.0",
+      "Build": 1,
+      "Created": "2026-02-02 00:00:01 UTC"
+    }, 
+    "FlowNodes": {
+      "Begin": {
+        "Type": "Begin",
+        "Position": [
+          16,
+          -76,
+          0
+        ],
+        "Properties": {},
+        "Blurbs": {},
+        "Next": [
+          "Init"
+        ]
+      },
+      "End": {
+        "Type": "End",
+        "Position": [
+          319,
+          70,
+          0
+        ],
+        "Properties": {},
+        "Blurbs": {}
+      },
+      "Deliver": {
+        "Type": "Deliver",
+        "Position": [
+          161,
+          70,
+          0
+        ],
+        "Properties": {},
+        "Blurbs": {},
+        "Next": [
+          "CollectInput"
+        ]
+      },
+      "Eject": {
+        "Type": "Eject",
+        "Position": [
+          29,
+          72,
+          0
+        ],
+        "Properties": {},
+        "Blurbs": {}
+      },
+      "Gather": {
+        "Type": "Gather",
+        "Position": [
+          304,
+          -5,
+          0
+        ],
+        "Properties": {},
+        "Blurbs": {},
+        "Next": [
+          "Deliver"
+        ]
+      },
+      "PassToEach": {
+        "Type": "PassToEach",
+        "Position": [
+          285,
+          -77,
+          0
+        ],
+        "Properties": {},
+        "Blurbs": {},
+        "Next": [
+          "Gather"
+        ]
+      },
+      "CollectInput": {
+        "Type": "CollectInput",
+        "Position": [
+          134,
+          -7,
+          0
+        ],
+        "Properties": {},
+        "Blurbs": {},
+        "Next": [
+          "PassToEach"
+        ]
+      },
+      "Agree": {
+        "Type": "Agree",
+        "Position": [
+          15,
+          -2,
+          0
+        ],
+        "Properties": {
+          "acceptableResponseToken": "Ready",
+          "agreementPrompt": "Welcome to the consensus forum. You are one of many expert intelligences participating. Be respectful, minimize bias and stay on topic. Reply exactly \u0027Ready\u0027 acknowledging this agreement when you are ready."
+        },
+        "Blurbs": {},
+        "Next": [
+          "CollectInput",
+          "Eject"
+        ],
+        "YesNo": [
+          "CollectInput",
+          "Eject"
+        ]
+      },
+      "Init": {
+        "Type": "Init",
+        "Position": [
+          158,
+          -76,
+          0
+        ],
+        "Properties": {},
+        "Blurbs": {},
+        "Next": [
+          "Agree"
+        ]
+      }
+    }
+  }
+}

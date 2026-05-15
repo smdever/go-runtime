@@ -1,0 +1,255 @@
+{
+  "Conversation": {
+    "Information": {
+      "Title": "LOKIPAI FAICP-Lite",
+      "Version": "1.0.0",
+      "Build": 1,
+      "Created": "2026-02-07 10:44:00 UTC"
+    },
+    "FlowNodes": {
+      "Begin": {
+        "Type": "Begin",
+        "Position": [
+          -78,
+          -23,
+          0
+        ],
+        "Properties": {},
+        "Blurbs": {
+          "Intro": "Beginning..."
+        },
+        "Next": [
+          "Init"
+        ]
+      },
+      "PassBackCommentary": {
+        "Type": "PassBackCommentary",
+        "Position": [
+          119,
+          170,
+          0
+        ],
+        "Properties": {},
+        "Blurbs": {},
+        "Next": [
+          "Gather"
+        ]
+      },
+      "PassEachResponse": {
+        "Type": "PassEachResponse",
+        "Position": [
+          112,
+          244,
+          0
+        ],
+        "Properties": {},
+        "Blurbs": {
+          "Intro": "Passing Each Response To Each..."
+        },
+        "Next": [
+          "PassBackCommentary"
+        ]
+      },
+      "Deliver": {
+        "Type": "Deliver",
+        "Position": [
+          305,
+          -48,
+          0
+        ],
+        "Properties": {},
+        "Blurbs": {},
+        "Next": [
+          "CollectInput"
+        ]
+      },
+      "UnifiedResponse": {
+        "Type": "UnifiedResponse",
+        "Position": [
+          478,
+          11,
+          0
+        ],
+        "Properties": {},
+        "Blurbs": {},
+        "Next": [
+          "Deliver"
+        ]
+      },
+      "PassToReasoning": {
+        "Type": "PassToReasoning",
+        "Position": [
+          605,
+          80,
+          0
+        ],
+        "Properties": {},
+        "Blurbs": {},
+        "Next": [
+          "UnifiedResponse"
+        ]
+      },
+      "Eject-Agree": {
+        "Type": "Eject",
+        "Position": [
+          139,
+          94,
+          0
+        ],
+        "Properties": {},
+        "Blurbs": {}
+      },
+      "Bias": {
+        "Type": "Bias",
+        "Position": [
+          474,
+          135,
+          0
+        ],
+        "Properties": {},
+        "Blurbs": {},
+        "Next": [
+          "PassToReasoning",
+          "Eject-Bias"
+        ],
+        "YesNo": [
+          "PassToReasoning",
+          "Eject-Bias"
+        ]
+      },
+      "Gather1": {
+        "Type": "Gather",
+        "Position": [
+          370,
+          256,
+          0
+        ],
+        "Properties": {},
+        "Blurbs": {
+          "Intro": "Gathering..."
+        },
+        "Next": [
+          "Bias"
+        ]
+      },
+      "PassToFinal": {
+        "Type": "PassToFinal",
+        "Position": [
+          114,
+          296,
+          0
+        ],
+        "Properties": {},
+        "Blurbs": {
+          "Intro": "Passing To Each for Final Response..."
+        },
+        "Next": [
+          "Gather1"
+        ]
+      },
+      "First": {
+        "Type": "First",
+        "Position": [
+          -23,
+          264,
+          0
+        ],
+        "Properties": {},
+        "Blurbs": {},
+        "Next": [
+          "PassEachResponse",
+          "PassToFinal"
+        ],
+        "YesNo": [
+          "PassEachResponse",
+          "PassToFinal"
+        ]
+      },
+      "Gather": {
+        "Type": "Gather",
+        "Position": [
+          318,
+          170,
+          0
+        ],
+        "Properties": {},
+        "Blurbs": {},
+        "Next": [
+          "First"
+        ]
+      },
+      "PassToEach": {
+        "Type": "PassToEach",
+        "Position": [
+          310,
+          95,
+          0
+        ],
+        "Properties": {},
+        "Blurbs": {},
+        "Next": [
+          "Gather"
+        ]
+      },
+      "CollectInput": {
+        "Type": "CollectInput",
+        "Position": [
+          299,
+          21,
+          0
+        ],
+        "Properties": {},
+        "Blurbs": {
+          "Intro": "Operation pauses. Waiting for prompt..."
+        },
+        "Next": [
+          "PassToEach"
+        ]
+      },
+      "Agree": {
+        "Type": "Agree",
+        "Position": [
+          15,
+          -2,
+          0
+        ],
+        "Properties": {
+          "acceptableResponseToken": "Ready",
+          "agreementPrompt": "Welcome to the consensus forum. You are one of many expert intelligences participating. Be respectful, minimize bias and stay on topic. Reply exactly \u0027Ready\u0027 acknowledging this agreement when you are ready."
+        },
+        "Blurbs": {},
+        "Next": [
+          "CollectInput",
+          "Eject-Agree"
+        ],
+        "YesNo": [
+          "CollectInput",
+          "Eject-Agree"
+        ]
+      },
+      "Init": {
+        "Type": "Init",
+        "Position": [
+          52,
+          1,
+          0
+        ],
+        "Properties": {},
+        "Blurbs": {},
+        "Next": [
+          "Agree"
+        ]
+      },
+      "Eject-Bias": {
+        "Type": "Eject",
+        "Position": [
+          609,
+          132,
+          0
+        ],
+        "Properties": {},
+        "Blurbs": {}
+      }
+    }
+  }
+}
