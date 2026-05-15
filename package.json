@@ -1,0 +1,24 @@
+{
+  "name": "go-runtime",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Node.js runtime host for GO / LOKIPAI flows",
+  "scripts": {
+    "dev": "tsx watch src/primary.ts",
+    "build": "tsc -p tsconfig.build.json",
+    "start": "node dist/primary.js",
+    "clean": "rimraf dist",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "fastify": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "rimraf": "^6.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.8.0"
+  }
+}
