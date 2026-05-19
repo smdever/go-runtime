@@ -16,7 +16,7 @@
         },
         body: JSON.stringify({
             model: request.model,
-            temperature: request.temperature ?? 0.7,
+            //temperature: request.temperature ?? 0.7,
             messages: request.messages.map((m) => ({
             role: m.role,
             content: m.content,

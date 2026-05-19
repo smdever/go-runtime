@@ -49,14 +49,57 @@
   //   metadata?: Record<string, unknown>;
   // }
   
+  // export interface OperatorRunRequest {
+  //   key?: string;
+  //   runId?: string;
+  //   name?: string;
+  //   executable: string;
+  //   prompt?: string;
+  //   passphrase?: string;
+  //   metadata?: Record<string, unknown>;
+  // }
+
+  // export interface OperatorRunResult {
+  //   ok: boolean;
+  //   runId?: string;
+  //   snapshot?: RunSnapshot | null;
+  //   reason?: "missing_executable" | "forbidden" | "failed";
+  //   error?: string;
+  // }
+
+  export interface OperatorRunArtifact {
+    name?: string;
+    artifactName?: string;
+    kind?: "lfx" | "bfx" | "js" | string;
+    encoding?: "text" | "base64" | string;
+    content?: string;
+    text?: string;
+    executable?: string;
+    contentBase64?: string;
+    base64?: string;
+    encrypted?: boolean;
+    scheme?: string;
+    metadata?: Record<string, unknown>;
+  }
+
   export interface OperatorRunRequest {
     key?: string;
     runId?: string;
+    engine?: EngineId;
     name?: string;
-    executable: string;
+
+    // Legacy form
+    executable?: string;
+
+    // Desktop / go-vite wrapper form
+    artifact?: OperatorRunArtifact;
+
     prompt?: string;
     passphrase?: string;
+    runtimeOverride?: unknown;
+    runtime?: unknown;
     metadata?: Record<string, unknown>;
+    saveDebugPackage?: boolean;
   }
 
   export interface OperatorRunResult {
@@ -65,7 +108,9 @@
     snapshot?: RunSnapshot | null;
     reason?: "missing_executable" | "forbidden" | "failed";
     error?: string;
+    diagnostic?: Record<string, unknown>;
   }
+
 
   export interface RunSubmission {
     runId: string;

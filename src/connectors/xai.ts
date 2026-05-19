@@ -17,7 +17,7 @@ export class XaiConnector implements LLMConnector {
       body: JSON.stringify({
         model: request.model,
         messages: request.messages,
-        temperature: request.temperature ?? 0.7,
+        //temperature: request.temperature ?? 0.7,
         stream: false,
       }),
     });

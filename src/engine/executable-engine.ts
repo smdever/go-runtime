@@ -106,7 +106,7 @@ export class ExecutableEngine implements RuntimeEngine {
       const providerTypeByName = new Map(
         providers
           .filter((p) => p?.Name && p?.Type)
-          .map((p) => [p.Name as string, String(p.Type).toLowerCase()]),
+          .map((p) => [String(p.Name).toLowerCase(), String(p.Type).toLowerCase()]),
       );
 
       const interactors = Array.isArray(spec?.Interactors)
@@ -117,7 +117,7 @@ export class ExecutableEngine implements RuntimeEngine {
         .filter((i) => i?.Role === "Primary")
         .map((i) => {
           const providerName = i.Provider ?? "";
-          const providerType = providerTypeByName.get(providerName) ?? providerName;
+          const providerType = providerTypeByName.get(providerName.toLowerCase()) ?? providerName;
 
           return {
             name: i.Name ?? "",
@@ -150,7 +150,7 @@ export class ExecutableEngine implements RuntimeEngine {
       const providerTypeByName = new Map(
         providers
           .filter((p) => p?.Name && p?.Type)
-          .map((p) => [p.Name as string, String(p.Type).toLowerCase()]),
+          .map((p) => [String(p.Name).toLowerCase(), String(p.Type).toLowerCase()]),
       );
 
       const interactors = Array.isArray(spec?.Interactors)
@@ -168,7 +168,7 @@ export class ExecutableEngine implements RuntimeEngine {
       }
 
       const providerName = found.Provider;
-      const providerType = providerTypeByName.get(providerName) ?? providerName;
+      const providerType = providerTypeByName.get(providerName.toLowerCase()) ?? providerName;
 
       return {
         name: found.Name,
@@ -177,7 +177,7 @@ export class ExecutableEngine implements RuntimeEngine {
       };
     }
 
-    const runtimeSpec = flow.getRuntime?.() ?? {};
+    const runtimeSpec = command.asset.metadata?.runtimeOverride ?? flow.getRuntime?.() ?? {};
     const runtimeActors = actorBindingsFromRuntime(runtimeSpec);
     const runtimeReasoning = reasoningFromRuntime(runtimeSpec);
 

@@ -26,7 +26,7 @@ export class AnthropicConnector implements LLMConnector {
         system: system || undefined,
         messages: nonSystemMessages,
         max_tokens: 4096,
-        temperature: request.temperature ?? 0.7,
+        //temperature: request.temperature ?? 0.7,
       }),
     });
 
