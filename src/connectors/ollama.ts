@@ -17,7 +17,7 @@
             messages: request.messages,
             stream: false,
             options: {
-            temperature: request.temperature ?? 0.7,
+            //temperature: request.temperature ?? 0.7,
             },
         }),
         });

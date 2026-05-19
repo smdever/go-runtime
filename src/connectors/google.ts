@@ -21,7 +21,7 @@ export class GoogleConnector implements LLMConnector {
             parts: [{ text: m.content }],
           })),
           generationConfig: {
-            temperature: request.temperature ?? 0.7,
+            //temperature: request.temperature ?? 0.7,
           },
         }),
       }
