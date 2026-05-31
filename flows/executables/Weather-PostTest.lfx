@@ -1,0 +1,678 @@
+// ============================================================
+// LOKIPIED Compiler 1.0.3
+// Flow: WeatherTest.003
+// Version: 1.0.0
+// Build: 1
+// Generated: 2026-05-31 16:33:45 UTC
+// ============================================================
+
+export function createFlow(runtime) {
+  const rt = runtime || (typeof globalThis !== 'undefined' ? globalThis : null) || {};
+  const info = {"title": "WeatherTest.003", "accountId": "", "build": 1, "created": "2026-05-24 23:20:44Z", "modified": "", "version": "1.0.0", "company": "", "creator": ""};
+
+  const __information = {"compiler": {"name": "LOKIPIED Compiler", "version": "1.0.3"}, "generated": "2026-05-31 16:33:45 UTC", "protection": {"encrypted": false, "scheme": "none"}, "flow": {"title": "WeatherTest.003", "version": "1.0.0", "build": 1, "accountId": "", "created": "2026-05-24 23:20:44Z", "modified": ""}};
+  function getInformation(){ return __information; }
+
+  const __runtime = {"Providers": [{"Name": "OpenAI-1", "Type": "openai", "BaseUrl": "https://api.openai.com", "Chat": "/v1/chat/completions", "Embed": "/v1/embeddings", "KeyRef": "OPENAI_API_KEY", "Enabled": true}], "Interactors": [{"Name": "Actor1", "Provider": "OpenAI-1", "Model": "gpt-4o", "Role": "Primary"}, {"Name": "Reason", "Provider": "OpenAI-1", "Model": "gpt-4o", "Role": "Reasoning"}], "Reasoning": "Reason", "Defaults": {"ParallelMode": true, "Bias": true, "SingleParagraph": false}};
+  function getRuntime(){ return __runtime; }
+
+  const __nodeProps = {"Begin": {}, "Consider": {}, "Weather": {"City": "Louisville", "Country": "United States", "Days": "3", "DynamicMode": "True", "InjectMode": "True", "McpEndpoint": "http://localhost:3001/mcp", "State": "Kentucky", "ToolName": "weather_get_forecast"}, "Deliver": {}, "End": {}};
+  const node_props = (name) => (__nodeProps && __nodeProps[name]) ? __nodeProps[name] : {};
+
+  const __nodeBlurbs = {"Begin": {}, "Consider": {"ConsiderPrompt": "How should I dress tomorrow in Baton Rouge, Louisiana?"}, "Weather": {}, "Deliver": {}, "End": {}};
+  const node_blurbs = (name) => (__nodeBlurbs && __nodeBlurbs[name]) ? __nodeBlurbs[name] : {};
+
+    // Runtime hook aliases (so compiled nodes can call functions by old names)
+    const ensure_ctx = (typeof rt.ensure_ctx === 'function') ? rt.ensure_ctx.bind(rt) : rt.ensure_ctx;
+    const ensure_conversation = (typeof rt.ensure_conversation === 'function') ? rt.ensure_conversation.bind(rt) : rt.ensure_conversation;
+    const set_active_node = (typeof rt.set_active_node === 'function') ? rt.set_active_node.bind(rt) : rt.set_active_node;
+    const get_passive = (typeof rt.get_passive === 'function') ? rt.get_passive.bind(rt) : rt.get_passive;
+    const get_actors = (typeof rt.get_actors === 'function') ? rt.get_actors.bind(rt) : rt.get_actors;
+    const get_narrator = (typeof rt.get_narrator === 'function') ? rt.get_narrator.bind(rt) : rt.get_narrator;
+    const get_last_round = (typeof rt.get_last_round === 'function') ? rt.get_last_round.bind(rt) : rt.get_last_round;
+    const get_last_context = (typeof rt.get_last_context === 'function') ? rt.get_last_context.bind(rt) : rt.get_last_context;
+    const get_last_useful_context = (typeof rt.get_last_useful_context === 'function') ? rt.get_last_useful_context.bind(rt) : rt.get_last_useful_context;
+    const create_round = (typeof rt.create_round === 'function') ? rt.create_round.bind(rt) : rt.create_round;
+    const create_round_from_last = (typeof rt.create_round_from_last === 'function') ? rt.create_round_from_last.bind(rt) : rt.create_round_from_last;
+    const create_utterance = (typeof rt.create_utterance === 'function') ? rt.create_utterance.bind(rt) : rt.create_utterance;
+    const sync_round_actors = (typeof rt.sync_round_actors === 'function') ? rt.sync_round_actors.bind(rt) : rt.sync_round_actors;
+    const remove_actor = (typeof rt.remove_actor === 'function') ? rt.remove_actor.bind(rt) : rt.remove_actor;
+    const send_utterance = (typeof rt.send_utterance === 'function') ? rt.send_utterance.bind(rt) : rt.send_utterance;
+    const get_to_list_names = (typeof rt.get_to_list_names === 'function') ? rt.get_to_list_names.bind(rt) : rt.get_to_list_names;
+    const get_conversation_prompt = (typeof rt.get_conversation_prompt === 'function') ? rt.get_conversation_prompt.bind(rt) : rt.get_conversation_prompt;
+    const get_clean_prompt = (typeof rt.get_clean_prompt === 'function') ? rt.get_clean_prompt.bind(rt) : rt.get_clean_prompt;
+    const get_collect_input_spec = (typeof rt.get_collect_input_spec === 'function') ? rt.get_collect_input_spec.bind(rt) : rt.get_collect_input_spec;
+    const clear_embeds = (typeof rt.clear_embeds === 'function') ? rt.clear_embeds.bind(rt) : rt.clear_embeds;
+    const emit_process = (typeof rt.emit_process === 'function') ? rt.emit_process.bind(rt) : rt.emit_process;
+    const emit_update = (typeof rt.emit_update === 'function') ? rt.emit_update.bind(rt) : rt.emit_update;
+    const emit_ready = (typeof rt.emit_ready === 'function') ? rt.emit_ready.bind(rt) : rt.emit_ready;
+    const emit_exec_llm_call = (typeof rt.emit_exec_llm_call === 'function') ? rt.emit_exec_llm_call.bind(rt) : rt.emit_exec_llm_call;
+    const emit_exec_llm_result = (typeof rt.emit_exec_llm_result === 'function') ? rt.emit_exec_llm_result.bind(rt) : rt.emit_exec_llm_result;
+    const emit_exec_decision = (typeof rt.emit_exec_decision === 'function') ? rt.emit_exec_decision.bind(rt) : rt.emit_exec_decision;
+    const emit_exec_collect_input = (typeof rt.emit_exec_collect_input === 'function') ? rt.emit_exec_collect_input.bind(rt) : rt.emit_exec_collect_input;
+    const emit_exec_prompt_accepted = (typeof rt.emit_exec_prompt_accepted === 'function') ? rt.emit_exec_prompt_accepted.bind(rt) : rt.emit_exec_prompt_accepted;
+    const report_state = (typeof rt.report_state === 'function') ? rt.report_state.bind(rt) : rt.report_state;
+    const report_name_stamp = (typeof rt.report_name_stamp === 'function') ? rt.report_name_stamp.bind(rt) : rt.report_name_stamp;
+    const report_detail_create_json = (typeof rt.report_detail_create_json === 'function') ? rt.report_detail_create_json.bind(rt) : rt.report_detail_create_json;
+    const emit_report = (typeof rt.emit_report === 'function') ? rt.emit_report.bind(rt) : rt.emit_report;
+    const get_available_tools_for_mcp_node = (typeof rt.get_available_tools_for_mcp_node === 'function') ? rt.get_available_tools_for_mcp_node.bind(rt) : rt.get_available_tools_for_mcp_node;
+    const get_advertised_tools = (typeof rt.get_advertised_tools === 'function') ? rt.get_advertised_tools.bind(rt) : rt.get_advertised_tools;
+    const call_mcp_tool = (typeof rt.call_mcp_tool === 'function') ? rt.call_mcp_tool.bind(rt) : rt.call_mcp_tool;
+    const inject_available_tools_into_prompt = (typeof rt.inject_available_tools_into_prompt === 'function') ? rt.inject_available_tools_into_prompt.bind(rt) : rt.inject_available_tools_into_prompt;
+
+
+  async function execute(ctx){
+    ctx = (typeof ensure_ctx === 'function') ? ensure_ctx(ctx) : (ctx || {});
+    ctx.meta = ctx.meta || {};
+    ctx.meta.flow = ctx.meta.flow || info;
+
+    await fn1_Begin(ctx);
+    return ctx;
+  }
+
+  async function cont(ctx) {
+    if (!ctx) return ctx;
+    const k = ctx.__lokipied_continue;
+    if (typeof k === 'function') {
+      ctx.__lokipied_continue = null;
+      await k();
+    }
+    return ctx;
+  }
+
+  async function fn1_Begin(ctx) {
+    /* Begin - Terminal for starting a flow. */
+    var _name = "Begin";
+    console.log("Begin: Begin");
+    await emit_process(_name);
+
+    try {
+      set_active_node(ctx, _name);
+      await emit_update(_name);
+
+      // Mirrors C# Begin.CreateRoundAsync(Name, null)
+      // Begin establishes a clean initial round boundary.
+      create_round(ctx, _name, null);
+
+      await emit_update(_name);
+      await emit_ready(_name);
+
+      await fn2_Consider(ctx);
+    } finally {
+    }
+    return ctx;
+  }
+
+  async function fn2_Consider(ctx) {
+    /* Consider - asks each actor to consider using Blurbs.ConsiderPrompt; sends to all; then continues. */
+    var _name = "Consider";
+    await emit_process(_name);
+    try {
+      set_active_node(ctx, _name);
+      console.log("Consider: Consider");
+      await emit_update(_name);
+
+      const lastRound = get_last_round(ctx);
+
+      // Create a round cloned from last, then clear utterances (C# does round.Utterances.Clear()).
+      const round = lastRound
+        ? create_round_from_last(ctx, _name, lastRound)
+        : create_round(ctx, _name, null);
+
+      round.utterances = [];
+
+      const actors = round.actors || get_actors(ctx) || [];
+
+      // Prompt lives in Blurbs, not Properties.
+      const b = node_blurbs(_name) || {};
+      const promptRaw = String(b?.ConsiderPrompt ?? b?.considerPrompt ?? "");
+
+      const promptBase = (typeof get_clean_prompt === "function")
+        ? get_clean_prompt(promptRaw)
+        : promptRaw.trim();
+
+      // If the immediate next node is a dynamic MCP node, advertise its tool.
+      const nextName = "Weather";
+      const nextProps = nextName ? node_props(nextName) : {};
+
+      const availableTools =
+        typeof get_available_tools_for_mcp_node === "function"
+          ? await get_available_tools_for_mcp_node(ctx, nextName, nextProps)
+          : [];
+
+    console.log("MCP advert check:", {
+      node: _name,
+      nextName,
+      hasGetter: typeof get_available_tools_for_mcp_node === "function",
+      nextProps,
+      availableToolCount: Array.isArray(availableTools) ? availableTools.length : -1,
+      availableToolNames: Array.isArray(availableTools)
+        ? availableTools.map(t => t?.name ?? String(t))
+        : []
+    });
+
+      const prompt = inject_available_tools_into_prompt(promptBase, availableTools);
+
+    console.log("MCP prompt check:", {
+      node: _name,
+      promptHasTools: String(prompt).includes("Available MCP tools:"),
+      promptChars: String(prompt).length,
+      promptPreview: String(prompt).slice(0, 1000)
+    });
+
+      const parallel = !!(ctx?.exec?.parallelMode);
+      const tasks = [];
+
+      for (const to of actors) {
+        const utt = create_utterance(ctx, round, {
+          to,
+          from: get_narrator(ctx),
+          prompt,
+          context: get_last_context(lastRound, to)
+        });
+
+        await emit_exec_llm_call(_name, {
+          from: utt.from?.name,
+          to: to?.name,
+          promptPreview: String(prompt).slice(0, 200),
+          promptChars: String(prompt).length
+        });
+
+        const p = (async () => {
+          const r = await send_utterance(ctx, utt);
+          const rawText = String(r?.apiResponse?.response ?? r?.apiResponse?.Response ?? r?.text ?? "");
+          await emit_exec_llm_result(_name, {
+            from: r?.from?.name,
+            preview: rawText,     // full response
+            respChars: rawText.length
+          });
+          return r;
+        })();
+
+        tasks.push(p);
+
+        // Match C# pattern: if not ParallelMode, await as we go
+        if (!parallel) await p;
+
+      }
+
+      await Promise.allSettled(tasks);
+
+      await emit_update(_name);
+      await emit_ready(_name);
+
+      await fn3_Weather(ctx);
+    } finally {
+    }
+    return;
+  }
+
+  async function fn3_Weather(ctx) {
+    /* Weather - MCP-backed weather evidence node.
+       Supports:
+       - static mode: configured City/State/Country/Days -> weather_get_forecast -> inject evidence to all actors
+       - dynamic mode: scan prior actor responses for structured MCP request -> call matching weather tool -> inject evidence to requesting actor
+    */
+    var _name = "Weather";
+    await emit_process(_name);
+
+    try {
+      set_active_node(ctx, _name);
+      console.log("Weather: Weather");
+      await emit_update(_name);
+
+      const props = node_props(_name) || {};
+
+      function str(value, fallback = "") {
+        const s = String(value ?? "").trim();
+        return s ? s : fallback;
+      }
+
+      function bool_prop(value, fallback = false) {
+        if (typeof value === "boolean") return value;
+        const s = String(value ?? "").trim().toLowerCase();
+        if (!s) return fallback;
+        return s === "true" || s === "1" || s === "yes" || s === "y";
+      }
+
+      function int_prop(value, fallback = 3) {
+        const n = Number.parseInt(String(value ?? ""), 10);
+        return Number.isFinite(n) ? n : fallback;
+      }
+
+      function clamp(n, min, max) {
+        return Math.max(min, Math.min(max, n));
+      }
+
+      function actor_name(actor) {
+        return actor?.name ?? String(actor ?? "");
+      }
+
+      function first_to_actor(utterance) {
+        const to = utterance?.to;
+        if (Array.isArray(to)) return to[0] ?? null;
+        return to ?? null;
+      }
+
+      function response_text(response) {
+        return String(
+          response?.apiResponse?.response ??
+          response?.apiResponse?.Response ??
+          response?.text ??
+          ""
+        ).trim();
+      }
+
+      function last_response_text(utterance) {
+        const responses = utterance?.responses ?? [];
+        if (!responses.length) return "";
+        return response_text(responses[responses.length - 1]);
+      }
+
+      function clone_prior_utterances_into(round, lastRound) {
+        round.utterances = [];
+
+        for (const u of (lastRound?.utterances ?? [])) {
+          round.utterances.push({
+            ...u,
+            responses: Array.isArray(u?.responses)
+              ? u.responses.map(r => ({ ...r }))
+              : [],
+          });
+        }
+      }
+
+      function strip_json_fence(raw) {
+        let s = String(raw ?? "").trim();
+        if (!s) return "";
+
+        // ```json ... ``` or ``` ... ```
+        const fenced = s.match(/^```(?:json)?\s*([\s\S]*?)\s*```$/i);
+        if (fenced) return fenced[1].trim();
+
+        // If text surrounds the JSON, try the outermost object.
+        const first = s.indexOf("{");
+        const last = s.lastIndexOf("}");
+        if (first >= 0 && last > first) {
+          return s.slice(first, last + 1).trim();
+        }
+
+        return s;
+      }
+
+      function try_parse_tool_request(raw) {
+        const json = strip_json_fence(raw);
+        if (!json) return null;
+
+        try {
+          const parsed = JSON.parse(json);
+          if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) return null;
+          if (parsed.toolRequested !== true) return null;
+          if (!str(parsed.toolName)) return null;
+          return parsed;
+        } catch {
+          return null;
+        }
+      }
+
+      function validate_tool_result(result, toolName) {
+        if (!result) {
+          throw new Error(`MCP tool '${toolName}' returned no result.`);
+        }
+
+        const text = String(result?.text ?? "").trim();
+
+        if (result?.isError === true) {
+          throw new Error(`MCP tool '${toolName}' reported an error: ${text}`);
+        }
+
+        if (!text) {
+          throw new Error(`MCP tool '${toolName}' returned no text content.`);
+        }
+      }
+
+      function format_tool_result_text(result) {
+        const text = String(result?.text ?? "").trim();
+        if (text) return text;
+
+        try {
+          return JSON.stringify(result?.rawResponse ?? result ?? {}, null, 2);
+        } catch {
+          return String(result ?? "");
+        }
+      }
+
+      function create_static_weather_prompt(toolResult) {
+        const evidence = format_tool_result_text(toolResult);
+        return [
+          "Weather information has been retrieved from an MCP weather tool.",
+          "Use the weather evidence below when answering the user's request.",
+          "Do not invent weather details that are not supported by this evidence.",
+          "",
+          "Weather evidence:",
+          evidence,
+        ].join("\n");
+      }
+
+      function create_dynamic_weather_prompt(request, toolResult) {
+        const evidence = format_tool_result_text(toolResult);
+        return [
+          "You requested weather information from an MCP weather tool.",
+          "The requested tool has returned the evidence below.",
+          "Use this evidence to answer the user's original request.",
+          "Do not invent weather details that are not supported by this evidence.",
+          "",
+          "Tool request:",
+          JSON.stringify(request ?? {}, null, 2),
+          "",
+          "Weather evidence:",
+          evidence,
+        ].join("\n");
+      }
+
+      const dynamicMode = bool_prop(props.DynamicMode ?? props.dynamicMode, false);
+      const injectMode = bool_prop(props.InjectMode ?? props.injectMode, true);
+
+      const endpoint = str(
+        props.McpEndpoint ?? props.mcpEndpoint ?? props.Endpoint ?? props.endpoint,
+        "http://localhost:3001/mcp"
+      );
+
+      const toolName = str(
+        props.ToolName ?? props.toolName,
+        "weather_get_forecast"
+      );
+
+      const lastRound = get_last_round(ctx);
+      const round = lastRound
+        ? create_round_from_last(ctx, _name, lastRound)
+        : create_round(ctx, _name, null);
+
+      clone_prior_utterances_into(round, lastRound);
+
+      const parallel = !!(ctx?.exec?.parallelMode ?? true);
+      const tasks = [];
+
+      async function send_prompt_to_actor(actor, prompt, stage) {
+        const utt = create_utterance(ctx, round, {
+          to: actor,
+          from: get_narrator(ctx),
+          prompt,
+          context: get_last_useful_context(ctx, actor),
+        });
+
+        await emit_exec_llm_call(_name, {
+          to: actor_name(actor),
+          stage,
+          promptPreview: String(prompt ?? "").slice(0, 200),
+          promptChars: String(prompt ?? "").length,
+        });
+
+        const p = (async () => {
+          const r = await send_utterance(ctx, utt);
+          const rawText = response_text(r);
+          await emit_exec_llm_result(_name, {
+            from: r?.from?.name,
+            stage,
+            preview: rawText.slice(0, 200),
+            respChars: rawText.length,
+          });
+          return r;
+        })();
+
+        tasks.push(p);
+        if (!parallel) await p;
+      }
+
+      if (!dynamicMode) {
+        const city = str(props.City ?? props.city);
+        const state = str(props.State ?? props.state);
+        const country = str(props.Country ?? props.country);
+        const days = clamp(int_prop(props.Days ?? props.days, 3), 1, 7);
+
+        if (!city) {
+          throw new Error(`${_name} requires City in static mode.`);
+        }
+
+        const args = { city, state, country, days };
+
+        await emit_update(_name, {
+          phase: "mcp.tool.call",
+          mode: "static",
+          endpoint,
+          toolName,
+          args,
+        });
+
+        const toolResult = await call_mcp_tool(endpoint, toolName, args);
+        validate_tool_result(toolResult, toolName);
+
+        ctx.vars ||= {};
+        ctx.vars[_name + ".toolResult"] = toolResult;
+        ctx.vars[_name + ".text"] = format_tool_result_text(toolResult);
+
+        await emit_update(_name, {
+          phase: "mcp.tool.result",
+          mode: "static",
+          endpoint,
+          toolName,
+          isError: toolResult?.isError === true,
+          textPreview: format_tool_result_text(toolResult).slice(0, 200),
+        });
+
+        const prompt = create_static_weather_prompt(toolResult);
+        const actors = get_actors(ctx) || [];
+
+        for (const actor of actors) {
+          await send_prompt_to_actor(actor, prompt, "weather_static_injection");
+        }
+      } else {
+        let matchingRequests = 0;
+        let injectedResponses = 0;
+
+        for (const priorUtterance of (lastRound?.utterances ?? [])) {
+          const raw = last_response_text(priorUtterance);
+          const request = try_parse_tool_request(raw);
+
+          if (!request) continue;
+
+          const requestedToolName = str(request.toolName);
+          if (requestedToolName.toLowerCase() !== toolName.toLowerCase()) {
+            console.log(`${_name} ignored MCP request for '${requestedToolName}' because this node handles '${toolName}'.`);
+            continue;
+          }
+
+          matchingRequests++;
+
+          const args = (request.arguments && typeof request.arguments === "object" && !Array.isArray(request.arguments))
+            ? request.arguments
+            : {};
+
+          await emit_update(_name, {
+            phase: "mcp.tool.call",
+            mode: "dynamic",
+            endpoint,
+            toolName: requestedToolName,
+            args,
+          });
+
+          const toolResult = await call_mcp_tool(endpoint, requestedToolName, args);
+          validate_tool_result(toolResult, requestedToolName);
+
+          ctx.vars ||= {};
+          ctx.vars[_name + ".lastToolResult"] = toolResult;
+          ctx.vars[_name + ".lastText"] = format_tool_result_text(toolResult);
+
+          await emit_update(_name, {
+            phase: "mcp.tool.result",
+            mode: "dynamic",
+            endpoint,
+            toolName: requestedToolName,
+            isError: toolResult?.isError === true,
+            textPreview: format_tool_result_text(toolResult).slice(0, 200),
+          });
+
+          if (!injectMode) continue;
+
+          const actor = first_to_actor(priorUtterance);
+          if (!actor) continue;
+
+          const prompt = create_dynamic_weather_prompt(request, toolResult);
+          await send_prompt_to_actor(actor, prompt, "weather_dynamic_injection");
+          injectedResponses++;
+        }
+
+        await emit_update(_name, {
+          mode: "dynamic",
+          matchingRequests,
+          injectedResponses,
+          injectMode,
+        });
+      }
+
+      if (parallel) await Promise.allSettled(tasks);
+
+      await emit_update(_name);
+      await emit_ready(_name);
+
+      await fn4_Deliver(ctx);
+    } catch (ex) {
+      console.error(`Error in ${_name}:`, ex);
+      throw ex;
+    } finally {
+    }
+    return;
+  }
+
+  async function fn4_Deliver(ctx) {
+    /* Deliver - emits the final unifiedResponse from the most recent useful utterance response. */
+    var _name = "Deliver";
+    await emit_process(_name);
+    try {
+      // capture the previous node identity before we overwrite activeNode
+      const _prevNode = ctx.activeNode ?? (ctx.conversation?.activeNode ?? null);
+
+      set_active_node(ctx, _name);
+      console.log("Deliver: Deliver");
+
+      const lastRound = get_last_round(ctx);
+
+      // Optional: mirror C# behavior by creating a boundary round for Deliver
+      // (Whether you want this is up to you; it's mostly audit/logging.)
+      create_round(ctx, _name, lastRound);
+
+      const singlePara = !!(node_props(_name)?.useSingleParagraphResponse);
+
+      const lastWasUnified =
+          (lastRound?.name === "UnifiedResponse")
+       || (_prevNode === "UnifiedResponse");
+
+      function single_paragraph(s) {
+        return String(s ?? "")
+          .replace(/\s*\n+\s*/g, " ")
+          .replace(/\s{2,}/g, " ")
+          .trim();
+      }
+
+      function last_useful_text(preferActorName = null) {
+        const rounds = (ctx.conversation?.rounds ?? []);
+        for (let ri = rounds.length - 1; ri >= 0; ri--) {
+          const rr = rounds[ri];
+          const utterances = rr?.utterances ?? [];
+          for (let ui = utterances.length - 1; ui >= 0; ui--) {
+            const u = utterances[ui];
+
+            if (preferActorName) {
+              const toName = u?.to?.name ?? String(u?.to ?? "");
+              if (toName && toName !== preferActorName) continue;
+            }
+
+            const responses = u?.responses ?? [];
+            for (let pi = responses.length - 1; pi >= 0; pi--) {
+              const r = responses[pi];
+              const raw = String(r?.apiResponse?.response ?? r?.apiResponse?.Response ?? r?.text ?? "");
+              const t = raw.trim();
+              if (t) return t;
+            }
+          }
+        }
+        return "";
+      }
+
+      const firstActorName = (get_actors(ctx)?.[0]?.name ?? null);
+
+      // C# difference: lastWasUnified uses a different lane; in LOKIT-Lite we can just broaden scan
+      const reasoningName = ctx.reasoning?.name ?? null;
+
+      let response = "";
+      if (lastWasUnified) {
+        // C# behavior: UnifiedResponse pulls from Reasoning actor
+        response = (reasoningName ? last_useful_text(reasoningName) : "")
+               || last_useful_text(null);
+      } else {
+        // C# behavior: non-unified pulls from first actor
+        response = (firstActorName ? last_useful_text(firstActorName) : "")
+               || last_useful_text(null);
+      }
+
+      const unified = singlePara ? single_paragraph(response) : String(response ?? "");
+
+      ctx.vars ||= {};
+      ctx.vars.unifiedResponse = unified;
+
+      ctx.conversation ||= {};
+      ctx.conversation.unifiedResponse = unified;
+
+      console.log(unified);
+
+      // Emit delivered output into the outer log (FULL text)
+      const full = String(unified ?? "");
+      await emit_exec_llm_result(_name, {
+        from: "Deliver",
+        preview: full,
+        respChars: full.length
+      });
+
+      await emit_update(_name, { unifiedChars: unified.length, singlePara, lastWasUnified });
+      await emit_ready(_name);
+
+      await fn5_End(ctx);
+    } finally {
+    }
+    return;
+  }
+
+  async function fn5_End(ctx) {
+    /* End - Terminal for LLM completion of flow. */
+    var _name = "End";
+    console.log("End: End");
+    await emit_process(_name);
+
+    try {
+      set_active_node(ctx, _name);
+      await emit_update(_name);
+
+      const lastRound = get_last_round(ctx);
+      create_round(ctx, _name, lastRound);
+
+      // Mirrors C#:
+      // foreach (INode node in Conversation.ProcessNodes) node.Reset();
+      // In compiled JS, node-local reset behavior is represented by ctx.nodeState.
+      // Keep this conservative: clear nodeState only if present.
+      if (ctx?.nodeState && typeof ctx.nodeState === "object") {
+        ctx.nodeState = {};
+      }
+
+      const b = node_blurbs(_name) || {};
+      const complete = String(b?.Complete ?? b?.complete ?? "");
+      if (complete) console.log(complete);
+
+      await emit_update(_name);
+      await emit_ready(_name);
+    } finally {
+    }
+    return ctx;
+  }
+
+  return { info, getInformation, getRuntime, execute, continue: cont };
+}

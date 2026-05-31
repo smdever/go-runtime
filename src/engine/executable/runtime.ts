@@ -121,12 +121,132 @@
     );
   }
 
+  function readString(value: unknown, fallback = ""): string {
+    const s = String(value ?? "").trim();
+    return s || fallback;
+  }
+
+  function readBool(value: unknown, fallback = false): boolean {
+    if (typeof value === "boolean") return value;
+
+    const s = String(value ?? "").trim().toLowerCase();
+    if (!s) return fallback;
+
+    return s === "true" || s === "1" || s === "yes" || s === "y";
+  }
+
+  async function get_available_tools_for_mcp_node(
+    _ctx: ExecutableCtxState,
+    nodeName: string,
+    nodeProps?: Record<string, unknown> | null,
+  ): Promise<McpToolDescriptor[]> {
+    if (!nodeName?.trim()) {
+      return [];
+    }
+
+console.log("get_available_tools_for_mcp_node:", {
+  nodeName,
+  nodeProps,
+});
+
+    const props = nodeProps ?? {};
+
+    // Only dynamic MCP nodes advertise optional tool use.
+    // Static Weather before Consider injects evidence directly and does not need advertisement.
+    const dynamicMode = readBool(
+      props.DynamicMode ?? props.dynamicMode,
+      false,
+    );
+
+console.log("get_available_tools_for_mcp_node dynamic check:", {
+  nodeName,
+  dynamicMode,
+});
+
+    if (!dynamicMode) {
+      return [];
+    }
+
+    const endpoint = readString(
+      props.McpEndpoint ??
+        props.mcpEndpoint ??
+        props.Endpoint ??
+        props.endpoint,
+      "http://localhost:3001/mcp",
+    );
+
+    const toolName = readString(
+      props.ToolName ?? props.toolName,
+      "",
+    );
+
+    if (!endpoint) {
+      return [];
+    }
+
+    const tools = await get_advertised_tools(endpoint, toolName || undefined);
+
+console.log("get_available_tools_for_mcp_node tools:", {
+  nodeName,
+  endpoint,
+  toolName,
+  count: tools.length,
+  names: tools.map((tool) => tool.name),
+});
+
+    return tools;
+  }
+
   async function call_mcp_tool(
     endpoint: string,
     toolName: string,
     args: JsonObject,
   ): Promise<McpToolResult> {
     return await McpStreamableClient.callToolOnce(endpoint, toolName, args);
+  }
+
+  function inject_available_tools_into_prompt(
+    prompt: string,
+    availableTools?: readonly McpToolDescriptor[] | null,
+  ): string {
+    if (!availableTools || availableTools.length === 0) {
+      return prompt;
+    }
+
+    const lines: string[] = [];
+
+    lines.push("");
+    lines.push("");
+    lines.push("Available MCP tools:");
+    lines.push(
+      "You may request one of the following tools only when it is needed to answer the user's request.",
+    );
+
+    for (const tool of availableTools) {
+      lines.push("");
+      lines.push(`Tool: ${tool.name}`);
+
+      if (tool.description?.trim()) {
+        lines.push(`Description: ${tool.description}`);
+      }
+
+      if (tool.inputSchemaJson?.trim()) {
+        lines.push(`Input Schema: ${tool.inputSchemaJson}`);
+      }
+    }
+
+    lines.push("");
+    lines.push("If no tool is needed, answer the request normally.");
+    lines.push(
+      "If a tool is required, respond only with a tool request in this format:",
+    );
+    lines.push("{");
+    lines.push('  "toolRequested": true,');
+    lines.push('  "toolName": "<tool name>",');
+    lines.push('  "arguments": { }');
+    lines.push("}");
+
+    return prompt + lines.join("\n");
   }
 
   export interface ExecutableRuntime {
@@ -176,11 +296,6 @@
       utt: ExecutableUtterance,
     ): Promise<ExecutableResponse>;
 
-    remove_actor(
-      ctx: ExecutableCtxState,
-      actor: ExecutableActorRef | string | undefined,
-    ): void;
-
     get_to_list_names(
       to: ExecutableActorRef | string | Array<ExecutableActorRef | string> | undefined,
     ): string;
@@ -194,18 +309,27 @@
 
     clear_embeds(ctx: ExecutableCtxState): void;
 
-    get_to_list_names(
-      to: ExecutableActorRef | string | Array<ExecutableActorRef | string> | undefined,
-    ): string;
-
-    get_clean_prompt(value: unknown): string;
-
-    get_collect_input_spec(
+    get_available_tools_for_mcp_node(
       ctx: ExecutableCtxState,
       nodeName: string,
-    ): { label: string; help: string; key: string };
+      nodeProps?: Record<string, unknown> | null,
+    ): Promise<McpToolDescriptor[]>;
 
-    clear_embeds(ctx: ExecutableCtxState): void;
+    get_advertised_tools(
+      endpoint: string,
+      toolName?: string,
+    ): Promise<McpToolDescriptor[]>;
+
+    call_mcp_tool(
+      endpoint: string,
+      toolName: string,
+      args: JsonObject,
+    ): Promise<McpToolResult>;
+
+    inject_available_tools_into_prompt(
+      prompt: string,
+      availableTools?: readonly McpToolDescriptor[] | null,
+    ): string;
 
     emit_process(nodeName: string, payload?: unknown): Promise<void>;
     emit_update(nodeName: string, payload?: unknown): Promise<void>;
@@ -545,6 +669,14 @@
           key: "prompt",
         };
       },
+
+      get_advertised_tools,
+
+      get_available_tools_for_mcp_node,
+
+      call_mcp_tool,
+
+      inject_available_tools_into_prompt,      
 
       clear_embeds(ctx: ExecutableCtxState): void {
         (ctx as ExecutableCtxState & { embeds?: unknown[] }).embeds = [];
