@@ -15,11 +15,86 @@
     type McpToolDescriptor,
     type McpToolResult,
   } from "../../tools/mcp/mcp-streamable-client.js";
+import { getProviderFromModel } from "../../shared/provider-resolver.js";
 
   export interface ExecutableRuntimeDeps {
     emitter: RuntimeEmitter;
     getCtx: () => ExecutableCtxState | null;
   }
+
+  function normalizeConnectorId(value: unknown): ProviderId {
+    const s = String(value ?? "").trim().toLowerCase();
+
+    switch (s) {
+      case "openai":
+      case "openaichat":
+        return "openai";
+
+      case "anthropic":
+      case "claude":
+      case "claudechat":
+        return "anthropic";
+
+      case "google":
+      case "gemini":
+      case "geminichat":
+        return "google";
+
+      case "xai":
+      case "xaichat":
+      case "grok":
+        return "xai";
+
+      case "ollama":
+      case "ollamachat":
+      case "ollamacontext":
+        return "ollama";
+
+      case "cohere":
+      case "coherechat":
+        return "cohere";
+
+      default:
+        return s as ProviderId;
+    }
+  }  
+
+  function resolveConnectorId(
+    providerRef: unknown,
+    providers: Array<{ Name?: string; name?: string; Type?: string; type?: string }> | undefined,
+  ): ProviderId {
+    const ref = String(providerRef ?? "").trim();
+
+    const provider = (providers ?? []).find((p) => {
+      const name = String(p.Name ?? p.name ?? "").trim();
+      return name.toLowerCase() === ref.toLowerCase();
+    });
+
+    if (provider) {
+      return normalizeConnectorId(provider.Type ?? provider.type);
+    }
+
+    return normalizeConnectorId(ref);
+  }  
+
+  function resolveConnectorIdForActor(actor: any, runtimeSpec: any): string {
+    const providerRef = String(actor?.provider ?? actor?.Provider ?? "").trim();
+
+    const providers = Array.isArray(runtimeSpec?.Providers)
+      ? runtimeSpec.Providers
+      : [];
+
+    const provider = providers.find((p: any) =>
+      String(p?.Name ?? p?.name ?? "").trim().toLowerCase() === providerRef.toLowerCase()
+    );
+
+    if (provider) {
+      return normalizeConnectorId(provider.Type ?? provider.type);
+    }
+
+    // If already "openai", "gemini", "OpenAIChat", etc.
+    return normalizeConnectorId(providerRef);
+  }  
 
   function cloneActor(actor: ExecutableActorRef): ExecutableActorRef {
     return {
@@ -752,7 +827,14 @@ console.log("get_available_tools_for_mcp_node tools:", {
           historyMessages: messages.length,
         });
 
-        const connector = getConnector(target.provider as ProviderId);
+        const providerRef = String(target.provider ?? "").trim();
+
+        const connectorId: ProviderId =
+          providerRef.includes("-")
+            ? getProviderFromModel(target.model)
+            : normalizeConnectorId(providerRef);
+
+        const connector = getConnector(connectorId);
 
         let apiResponse;
         try {
