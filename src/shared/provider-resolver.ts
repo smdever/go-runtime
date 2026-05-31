@@ -1,4 +1,4 @@
-// src\shared\provider-resolver.ts
+    // src\shared\provider-resolver.ts
     import type { ProviderId } from "./credentials.js";
 
     export function getProviderFromModel(model: string): ProviderId {
@@ -30,4 +30,65 @@
     }
 
     throw new Error(`Unable to resolve provider from model: ${model}`);
+    }
+
+    export function normalizeProviderType(value: unknown): ProviderId {
+    const s = String(value ?? "").trim().toLowerCase();
+
+    if (s === "openai" || s === "openaichat") return "openai";
+    if (s === "google" || s === "gemini" || s === "geminichat") return "google";
+    if (s === "anthropic" || s === "claude" || s === "claudechat") return "anthropic";
+    if (s === "xai" || s === "xaichat" || s === "grok") return "xai";
+    if (s === "cohere" || s === "coherechat") return "cohere";
+
+    throw new Error(`Unable to normalize provider type: ${String(value)}`);
+    }
+
+    export function resolveProviderForActor(
+    actor: {
+        provider?: string;
+        Provider?: string;
+        model?: string;
+        Model?: string;
+    },
+    runtime?: {
+        Providers?: Array<{
+        Name?: string;
+        name?: string;
+        Type?: string;
+        type?: string;
+        }>;
+    },
+    ): ProviderId {
+    const providerRef = String(actor.provider ?? actor.Provider ?? "").trim();
+    const model = String(actor.model ?? actor.Model ?? "").trim();
+
+    const providers = Array.isArray(runtime?.Providers)
+        ? runtime.Providers
+        : [];
+
+    if (providerRef) {
+        const namedProvider = providers.find((p) => {
+        const name = String(p.Name ?? p.name ?? "").trim();
+        return name.toLowerCase() === providerRef.toLowerCase();
+        });
+
+        if (namedProvider) {
+        return normalizeProviderType(namedProvider.Type ?? namedProvider.type);
+        }
+
+        try {
+        return normalizeProviderType(providerRef);
+        } catch {
+        // Fall through to model inference.
+        }
+    }
+
+    if (model) {
+        return getProviderFromModel(model);
+    }
+
+    throw new Error(
+        `Unable to resolve provider for actor: ${JSON.stringify(actor)}`,
+    );
     }
