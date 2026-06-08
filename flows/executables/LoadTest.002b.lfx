@@ -1,0 +1,671 @@
+﻿// ============================================================
+// LOKIPIED Compiler 1.0.3
+// Flow: LoadTest.001
+// Version: 1.0.0
+// Build: 1
+// Generated: 2026-06-07 23:06:59 UTC
+// ============================================================
+
+export function createFlow(runtime) {
+  const rt = runtime || (typeof globalThis !== 'undefined' ? globalThis : null) || {};
+  const info = {"title":"LoadTest.001","accountId":"","build":1,"created":"2026-06-06 20:30:13Z","modified":"","version":"1.0.0","company":"","creator":""};
+
+  const __information = {"compiler":{"name":"LOKIPIED Compiler","version":"1.0.3"},"generated":"2026-06-07 23:06:59 UTC","protection":{"encrypted":false,"scheme":"none"},"flow":{"title":"LoadTest.001","version":"1.0.0","build":1,"accountId":"","created":"2026-06-06 20:30:13Z","modified":""}};
+  function getInformation(){ return __information; }
+
+  const __runtime = {"Providers":[{"Name":"OpenAI-1","Type":"OpenAIChat","BaseUrl":"api.openai.com","Enabled":true}],"Interactors":[{"Name":"Actor1","Provider":"OpenAI-1","Model":"gpt-5.5","Role":"Primary"},{"Name":"Reason","Provider":"OpenAI-1","Model":"gpt-5.5","Role":"Reasoning"},{"Name":"Embedding","Provider":"OpenAI-1","Model":"text-embedding-3-large","Role":"Embedding"}],"Reasoning":"Reason","Embedding":"Embedding","Defaults":{"ParallelMode":true,"Bias":true,"SingleParagraph":false}};
+  function getRuntime(){ return __runtime; }
+
+  const __nodeProps = {"Begin":{},"Load":{"ContinuousMode":"False","Filter":"*.txt","ImportPath":"C:\\Projects\\Load\\LoadTest","RawMode":"False","WaitMode":"True"},"Consider":{},"Deliver":{},"Export":{"ExportPath":"C:\\Projects\\Load\\LoadTest\\Export"},"End":{}};
+  const node_props = (name) => (__nodeProps && __nodeProps[name]) ? __nodeProps[name] : {};
+
+  const __nodeBlurbs = {"Begin":{},"Load":{"LoadPrompt":"The following file content has been loaded into the conversation. Treat it as relevant context for the current discourse unless later instructions say otherwise."},"Consider":{"ConsiderPrompt":"What is your assessment of the imported file?"},"Deliver":{},"Export":{},"End":{}};
+  const node_blurbs = (name) => (__nodeBlurbs && __nodeBlurbs[name]) ? __nodeBlurbs[name] : {};
+
+  // Runtime hook aliases (so compiled nodes can call functions by old names)
+  const ensure_ctx = (typeof rt.ensure_ctx === 'function') ? rt.ensure_ctx.bind(rt) : rt.ensure_ctx;
+  const ensure_conversation = (typeof rt.ensure_conversation === 'function') ? rt.ensure_conversation.bind(rt) : rt.ensure_conversation;
+  const set_active_node = (typeof rt.set_active_node === 'function') ? rt.set_active_node.bind(rt) : rt.set_active_node;
+  const get_passive = (typeof rt.get_passive === 'function') ? rt.get_passive.bind(rt) : rt.get_passive;
+  const get_actors = (typeof rt.get_actors === 'function') ? rt.get_actors.bind(rt) : rt.get_actors;
+  const get_narrator = (typeof rt.get_narrator === 'function') ? rt.get_narrator.bind(rt) : rt.get_narrator;
+  const get_last_round = (typeof rt.get_last_round === 'function') ? rt.get_last_round.bind(rt) : rt.get_last_round;
+  const get_last_context = (typeof rt.get_last_context === 'function') ? rt.get_last_context.bind(rt) : rt.get_last_context;
+  const get_last_useful_context = (typeof rt.get_last_useful_context === 'function') ? rt.get_last_useful_context.bind(rt) : rt.get_last_useful_context;
+  const create_round = (typeof rt.create_round === 'function') ? rt.create_round.bind(rt) : rt.create_round;
+  const create_round_from_last = (typeof rt.create_round_from_last === 'function') ? rt.create_round_from_last.bind(rt) : rt.create_round_from_last;
+  const create_utterance = (typeof rt.create_utterance === 'function') ? rt.create_utterance.bind(rt) : rt.create_utterance;
+  const sync_round_actors = (typeof rt.sync_round_actors === 'function') ? rt.sync_round_actors.bind(rt) : rt.sync_round_actors;
+  const remove_actor = (typeof rt.remove_actor === 'function') ? rt.remove_actor.bind(rt) : rt.remove_actor;
+  const send_utterance = (typeof rt.send_utterance === 'function') ? rt.send_utterance.bind(rt) : rt.send_utterance;
+  const get_to_list_names = (typeof rt.get_to_list_names === 'function') ? rt.get_to_list_names.bind(rt) : rt.get_to_list_names;
+  const get_conversation_prompt = (typeof rt.get_conversation_prompt === 'function') ? rt.get_conversation_prompt.bind(rt) : rt.get_conversation_prompt;
+  const get_clean_prompt = (typeof rt.get_clean_prompt === 'function') ? rt.get_clean_prompt.bind(rt) : rt.get_clean_prompt;
+  const get_collect_input_spec = (typeof rt.get_collect_input_spec === 'function') ? rt.get_collect_input_spec.bind(rt) : rt.get_collect_input_spec;
+  const clear_embeds = (typeof rt.clear_embeds === 'function') ? rt.clear_embeds.bind(rt) : rt.clear_embeds;
+  const emit_process = (typeof rt.emit_process === 'function') ? rt.emit_process.bind(rt) : rt.emit_process;
+  const emit_update = (typeof rt.emit_update === 'function') ? rt.emit_update.bind(rt) : rt.emit_update;
+  const emit_ready = (typeof rt.emit_ready === 'function') ? rt.emit_ready.bind(rt) : rt.emit_ready;
+  const emit_exec_llm_call = (typeof rt.emit_exec_llm_call === 'function') ? rt.emit_exec_llm_call.bind(rt) : rt.emit_exec_llm_call;
+  const emit_exec_llm_result = (typeof rt.emit_exec_llm_result === 'function') ? rt.emit_exec_llm_result.bind(rt) : rt.emit_exec_llm_result;
+  const emit_exec_decision = (typeof rt.emit_exec_decision === 'function') ? rt.emit_exec_decision.bind(rt) : rt.emit_exec_decision;
+  const emit_exec_collect_input = (typeof rt.emit_exec_collect_input === 'function') ? rt.emit_exec_collect_input.bind(rt) : rt.emit_exec_collect_input;
+  const emit_exec_prompt_accepted = (typeof rt.emit_exec_prompt_accepted === 'function') ? rt.emit_exec_prompt_accepted.bind(rt) : rt.emit_exec_prompt_accepted;
+  const report_state = (typeof rt.report_state === 'function') ? rt.report_state.bind(rt) : rt.report_state;
+  const report_name_stamp = (typeof rt.report_name_stamp === 'function') ? rt.report_name_stamp.bind(rt) : rt.report_name_stamp;
+  const report_detail_create_json = (typeof rt.report_detail_create_json === 'function') ? rt.report_detail_create_json.bind(rt) : rt.report_detail_create_json;
+  const emit_report = (typeof rt.emit_report === 'function') ? rt.emit_report.bind(rt) : rt.emit_report;
+  const get_available_tools_for_mcp_node = (typeof rt.get_available_tools_for_mcp_node === 'function') ? rt.get_available_tools_for_mcp_node.bind(rt) : rt.get_available_tools_for_mcp_node;
+  const get_advertised_tools = (typeof rt.get_advertised_tools === 'function') ? rt.get_advertised_tools.bind(rt) : rt.get_advertised_tools;
+  const call_mcp_tool = (typeof rt.call_mcp_tool === 'function') ? rt.call_mcp_tool.bind(rt) : rt.call_mcp_tool;
+  const inject_available_tools_into_prompt = (typeof rt.inject_available_tools_into_prompt === 'function') ? rt.inject_available_tools_into_prompt.bind(rt) : rt.inject_available_tools_into_prompt;
+  const directory_exists = (typeof rt.directory_exists === 'function') ? rt.directory_exists.bind(rt) : rt.directory_exists;
+  const get_load_filenames = (typeof rt.get_load_filenames === 'function') ? rt.get_load_filenames.bind(rt) : rt.get_load_filenames;
+  const wait_for_load_files = (typeof rt.wait_for_load_files === 'function') ? rt.wait_for_load_files.bind(rt) : rt.wait_for_load_files;
+  const load_files_for_actors = (typeof rt.load_files_for_actors === 'function') ? rt.load_files_for_actors.bind(rt) : rt.load_files_for_actors;
+  const create_load_prompt = (typeof rt.create_load_prompt === 'function') ? rt.create_load_prompt.bind(rt) : rt.create_load_prompt;
+  const get_load_passing_to_blurb = (typeof rt.get_load_passing_to_blurb === 'function') ? rt.get_load_passing_to_blurb.bind(rt) : rt.get_load_passing_to_blurb;
+  const get_prompt_hint = (typeof rt.get_prompt_hint === 'function') ? rt.get_prompt_hint.bind(rt) : rt.get_prompt_hint;
+  const create_export_prefix_from_prompt_hint = (typeof rt.create_export_prefix_from_prompt_hint === 'function') ? rt.create_export_prefix_from_prompt_hint.bind(rt) : rt.create_export_prefix_from_prompt_hint;
+  const ensure_export_directory = (typeof rt.ensure_export_directory === 'function') ? rt.ensure_export_directory.bind(rt) : rt.ensure_export_directory;
+  const export_actor_responses = (typeof rt.export_actor_responses === 'function') ? rt.export_actor_responses.bind(rt) : rt.export_actor_responses;
+  const export_all_responses = (typeof rt.export_all_responses === 'function') ? rt.export_all_responses.bind(rt) : rt.export_all_responses;
+  const delay = (typeof rt.delay === 'function') ? rt.delay.bind(rt) : rt.delay;
+
+
+  async function execute(ctx){
+    ctx = (typeof ensure_ctx === 'function') ? ensure_ctx(ctx) : (ctx || {});
+    ctx.meta = ctx.meta || {};
+    ctx.meta.flow = ctx.meta.flow || info;
+
+    await fn1_Begin(ctx);
+    return ctx;
+  }
+
+  async function cont(ctx) {
+    if (!ctx) return ctx;
+    const k = ctx.__lokipied_continue;
+    if (typeof k === 'function') {
+      ctx.__lokipied_continue = null;
+      await k();
+    }
+    return ctx;
+  }
+
+  async function fn1_Begin(ctx) {
+    /* Begin - Terminal for starting a flow. */
+    var _name = "Begin";
+    console.log("Begin: Begin");
+    await emit_process(_name);
+
+    try {
+      set_active_node(ctx, _name);
+      await emit_update(_name);
+
+      // Mirrors C# Begin.CreateRoundAsync(Name, null)
+      // Begin establishes a clean initial round boundary.
+      create_round(ctx, _name, null);
+
+      await emit_update(_name);
+      await emit_ready(_name);
+
+      await fn2_Load(ctx);
+    } finally {
+    }
+    return ctx;
+
+  }
+
+  async function fn2_Load(ctx) {
+    /* Load - imports matching files, stages actor-qualified prompts, sends them, then continues.
+       Mirrors LOKIPAI Load.cs behavior:
+       - creates a fresh round from the last round and clears utterances
+       - reads ImportPath / Filter / WaitMode / RawMode
+       - optionally waits for files
+       - uses file-helper-backed harness functions for targeting and history moves
+       - sends one combined load utterance per actor
+    */
+    var _name = "Load";
+    await emit_process(_name);
+
+    try {
+      set_active_node(ctx, _name);
+      console.log("Load: Load");
+      await emit_update(_name);
+
+      const props = node_props(_name) || {};
+
+      function str(value, fallback = "") {
+        const s = String(value ?? "").trim();
+        return s ? s : fallback;
+      }
+
+      function bool_prop(value, fallback = false) {
+        if (typeof value === "boolean") return value;
+        const s = String(value ?? "").trim().toLowerCase();
+        if (!s) return fallback;
+        return s === "true" || s === "1" || s === "yes" || s === "y";
+      }
+
+      function actor_name(actor) {
+        return actor?.name ?? actor?.Name ?? String(actor ?? "");
+      }
+
+      function response_text(response) {
+        return String(
+          response?.apiResponse?.response ??
+          response?.apiResponse?.Response ??
+          response?.text ??
+          ""
+        );
+      }
+
+      const lastRound = get_last_round(ctx);
+      const round = lastRound
+        ? create_round_from_last(ctx, _name, lastRound)
+        : create_round(ctx, _name, null);
+
+      // Match C# Load.ExecuteAsync: CreateRoundAsync(...), then Round.Utterances.Clear().
+      round.utterances = [];
+
+      const actors = round.actors || get_actors(ctx) || [];
+      const narrator = get_narrator(ctx);
+
+      const importPath = str(props.ImportPath ?? props.importPath, "");
+      const filter = str(props.Filter ?? props.filter, "*.*");
+      const waitMode = bool_prop(props.WaitMode ?? props.waitMode, true);
+      const rawMode = bool_prop(props.RawMode ?? props.rawMode, false);
+
+      let loadedPromptsByActor = new Map();
+
+      if (!importPath) {
+        console.log(`Load ImportPath is missing: [${importPath}]`);
+      } else {
+        const importPathExists = typeof directory_exists === "function"
+          ? await directory_exists(importPath)
+          : true;
+
+        if (!importPathExists) {
+          console.log(`Load ImportPath does not exist: [${importPath}]`);
+        } else {
+          await emit_update(_name, {
+            phase: waitMode ? "load.waiting" : "load.scanning",
+            importPath,
+            filter,
+            waitMode,
+            rawMode,
+          });
+
+          const filesList = waitMode
+            ? await wait_for_load_files(importPath, filter, { pollMs: 5000, ctx, nodeName: _name })
+            : await get_load_filenames(importPath, filter);
+
+          if (Array.isArray(filesList) && filesList.length > 0) {
+            loadedPromptsByActor = await load_files_for_actors(ctx, {
+              nodeName: _name,
+              round,
+              actors,
+              filesList,
+              importPath,
+              rawMode,
+              from: narrator,
+              moveToHistory: true,
+            });
+
+            await emit_update(_name, {
+              phase: "load.files.loaded",
+              fileCount: filesList.length,
+              actorCount: loadedPromptsByActor?.size ?? 0,
+            });
+          } else {
+            console.log(`No files found in [${importPath}] matching [${filter}].`);
+            await emit_update(_name, {
+              phase: "load.files.none",
+              importPath,
+              filter,
+            });
+          }
+        }
+      }
+
+      const b = node_blurbs(_name) || {};
+      const loadPromptRaw = rawMode
+        ? ""
+        : (typeof create_load_prompt === "function"
+            ? create_load_prompt(b)
+            : "The following file content has been loaded into the conversation. Treat it as relevant context for the current discourse unless later instructions say otherwise.");
+
+      const loadPrompt = String(loadPromptRaw ?? "").trim()
+        ? String(loadPromptRaw).trimEnd() + "\n\n"
+        : "";
+
+      const passingTo = typeof get_load_passing_to_blurb === "function"
+        ? get_load_passing_to_blurb(b)
+        : "loading to";
+
+      const parallel = !!(ctx?.exec?.parallelMode);
+      const tasks = [];
+
+      for (const actor of actors) {
+        const actorPrompts = loadedPromptsByActor?.get?.(actor) ?? [];
+        if (!Array.isArray(actorPrompts) || actorPrompts.length === 0) continue;
+
+        let prompt = loadPrompt;
+        for (const actorPrompt of actorPrompts) {
+          if (!String(actorPrompt ?? "").trim()) continue;
+          if (prompt.length > 0) prompt += "\n\n";
+          prompt += String(actorPrompt);
+        }
+
+        if (!String(prompt ?? "").trim()) continue;
+
+        const utt = create_utterance(ctx, round, {
+          to: actor,
+          from: narrator,
+          prompt,
+          context: get_last_context(lastRound, actor),
+        });
+
+        await emit_exec_llm_call(_name, {
+          from: utt.from?.name,
+          to: actor_name(actor),
+          promptPreview: String(prompt).slice(0, 200),
+          promptChars: String(prompt).length,
+        });
+
+        console.log(".." + actor_name(actor) + " " + passingTo);
+
+        const p = (async () => {
+          const r = await send_utterance(ctx, utt);
+          const rawText = response_text(r);
+          await emit_exec_llm_result(_name, {
+            from: r?.from?.name,
+            preview: rawText.slice(0, 200),
+            respChars: rawText.length,
+          });
+          return r;
+        })();
+
+        tasks.push(p);
+        if (!parallel) await p;
+      }
+
+      await Promise.allSettled(tasks);
+
+      await emit_update(_name);
+      await emit_ready(_name);
+
+      await fn3_Consider(ctx);
+    } catch (ex) {
+      console.error(`Error in ${_name}:`, ex);
+      throw ex;
+    } finally {
+    }
+    return;
+
+
+  }
+
+  async function fn3_Consider(ctx) {
+    /* Consider - asks each actor to consider using Blurbs.ConsiderPrompt; sends to all; then continues. */
+    var _name = "Consider";
+    await emit_process(_name);
+    try {
+      set_active_node(ctx, _name);
+      console.log("Consider: Consider");
+      await emit_update(_name);
+
+      const lastRound = get_last_round(ctx);
+
+      // Create a round cloned from last, then clear utterances (C# does round.Utterances.Clear()).
+      const round = lastRound
+        ? create_round_from_last(ctx, _name, lastRound)
+        : create_round(ctx, _name, null);
+
+      round.utterances = [];
+
+      const actors = round.actors || get_actors(ctx) || [];
+
+      // Prompt lives in Blurbs, not Properties.
+      const b = node_blurbs(_name) || {};
+      const promptRaw = String(b?.ConsiderPrompt ?? b?.considerPrompt ?? "");
+
+      const promptBase = (typeof get_clean_prompt === "function")
+        ? get_clean_prompt(promptRaw)
+        : promptRaw.trim();
+
+      // If the immediate next node is a dynamic MCP node, advertise its tool.
+      const nextName = "Deliver";
+      const nextProps = nextName ? node_props(nextName) : {};
+
+      const availableTools =
+        typeof get_available_tools_for_mcp_node === "function"
+          ? await get_available_tools_for_mcp_node(ctx, nextName, nextProps)
+          : [];
+
+    console.log("MCP advert check:", {
+      node: _name,
+      nextName,
+      hasGetter: typeof get_available_tools_for_mcp_node === "function",
+      nextProps,
+      availableToolCount: Array.isArray(availableTools) ? availableTools.length : -1,
+      availableToolNames: Array.isArray(availableTools)
+        ? availableTools.map(t => t?.name ?? String(t))
+        : []
+    });
+
+      const prompt = inject_available_tools_into_prompt(promptBase, availableTools);
+
+    console.log("MCP prompt check:", {
+      node: _name,
+      promptHasTools: String(prompt).includes("Available MCP tools:"),
+      promptChars: String(prompt).length,
+      promptPreview: String(prompt).slice(0, 1000)
+    });
+
+      const parallel = !!(ctx?.exec?.parallelMode);
+      const tasks = [];
+
+      for (const to of actors) {
+        const utt = create_utterance(ctx, round, {
+          to,
+          from: get_narrator(ctx),
+          prompt,
+          context: get_last_context(lastRound, to)
+        });
+
+        await emit_exec_llm_call(_name, {
+          from: utt.from?.name,
+          to: to?.name,
+          promptPreview: String(prompt).slice(0, 200),
+          promptChars: String(prompt).length
+        });
+
+        const p = (async () => {
+          const r = await send_utterance(ctx, utt);
+          const rawText = String(r?.apiResponse?.response ?? r?.apiResponse?.Response ?? r?.text ?? "");
+          await emit_exec_llm_result(_name, {
+            from: r?.from?.name,
+            preview: rawText,     // full response
+            respChars: rawText.length
+          });
+          return r;
+        })();
+
+        tasks.push(p);
+
+        // Match C# pattern: if not ParallelMode, await as we go
+        if (!parallel) await p;
+
+      }
+
+      await Promise.allSettled(tasks);
+
+      await emit_update(_name);
+      await emit_ready(_name);
+
+      await fn4_Deliver(ctx);
+    } finally {
+    }
+    return;
+
+  }
+
+  async function fn4_Deliver(ctx) {
+    /* Deliver - emits the final unifiedResponse from the most recent useful utterance response. */
+    var _name = "Deliver";
+    await emit_process(_name);
+    try {
+      // capture the previous node identity before we overwrite activeNode
+      const _prevNode = ctx.activeNode ?? (ctx.conversation?.activeNode ?? null);
+
+      set_active_node(ctx, _name);
+      console.log("Deliver: Deliver");
+
+      const lastRound = get_last_round(ctx);
+
+      // Optional: mirror C# behavior by creating a boundary round for Deliver
+      // (Whether you want this is up to you; it's mostly audit/logging.)
+      create_round(ctx, _name, lastRound);
+
+      const singlePara = !!(node_props(_name)?.useSingleParagraphResponse);
+
+      const lastWasUnified =
+          (lastRound?.name === "UnifiedResponse")
+       || (_prevNode === "UnifiedResponse");
+
+      function single_paragraph(s) {
+        return String(s ?? "")
+          .replace(/\s*\n+\s*/g, " ")
+          .replace(/\s{2,}/g, " ")
+          .trim();
+      }
+
+      function last_useful_text(preferActorName = null) {
+        const rounds = (ctx.conversation?.rounds ?? []);
+        for (let ri = rounds.length - 1; ri >= 0; ri--) {
+          const rr = rounds[ri];
+          const utterances = rr?.utterances ?? [];
+          for (let ui = utterances.length - 1; ui >= 0; ui--) {
+            const u = utterances[ui];
+
+            if (preferActorName) {
+              const toName = u?.to?.name ?? String(u?.to ?? "");
+              if (toName && toName !== preferActorName) continue;
+            }
+
+            const responses = u?.responses ?? [];
+            for (let pi = responses.length - 1; pi >= 0; pi--) {
+              const r = responses[pi];
+              const raw = String(r?.apiResponse?.response ?? r?.apiResponse?.Response ?? r?.text ?? "");
+              const t = raw.trim();
+              if (t) return t;
+            }
+          }
+        }
+        return "";
+      }
+
+      const firstActorName = (get_actors(ctx)?.[0]?.name ?? null);
+
+      // C# difference: lastWasUnified uses a different lane; in LOKIT-Lite we can just broaden scan
+      const reasoningName = ctx.reasoning?.name ?? null;
+
+      let response = "";
+      if (lastWasUnified) {
+        // C# behavior: UnifiedResponse pulls from Reasoning actor
+        response = (reasoningName ? last_useful_text(reasoningName) : "")
+               || last_useful_text(null);
+      } else {
+        // C# behavior: non-unified pulls from first actor
+        response = (firstActorName ? last_useful_text(firstActorName) : "")
+               || last_useful_text(null);
+      }
+
+      const unified = singlePara ? single_paragraph(response) : String(response ?? "");
+
+      ctx.vars ||= {};
+      ctx.vars.unifiedResponse = unified;
+
+      ctx.conversation ||= {};
+      ctx.conversation.unifiedResponse = unified;
+
+      console.log(unified);
+
+      // Emit delivered output into the outer log (FULL text)
+      const full = String(unified ?? "");
+      await emit_exec_llm_result(_name, {
+        from: "Deliver",
+        preview: full,
+        respChars: full.length
+      });
+
+      await emit_update(_name, { unifiedChars: unified.length, singlePara, lastWasUnified });
+      await emit_ready(_name);
+
+      await fn5_Export(ctx);
+    } finally {
+    }
+    return;
+
+  }
+
+  async function fn5_Export(ctx) {
+    /* Export - writes the last useful round responses to disk, then continues.
+       Mirrors LOKIPAI Export.cs behavior:
+       - reads ExportPath / Prefix / UsePromptHint / MultipleFiles / FileType
+       - creates the export directory if needed
+       - creates a fresh round from the last round for actor enumeration
+       - writes either one file per actor or one combined AllResponses file
+       - lets common harness + file-helper own filename safety, timestamps, and response lookup
+    */
+    var _name = "Export";
+    await emit_process(_name);
+
+    try {
+      set_active_node(ctx, _name);
+      console.log("Export: Export");
+      await emit_update(_name);
+
+      const props = node_props(_name) || {};
+
+      function str(value, fallback = "") {
+        const s = String(value ?? "").trim();
+        return s ? s : fallback;
+      }
+
+      function bool_prop(value, fallback = false) {
+        if (typeof value === "boolean") return value;
+        const s = String(value ?? "").trim().toLowerCase();
+        if (!s) return fallback;
+        return s === "true" || s === "1" || s === "yes" || s === "y";
+      }
+
+      function actor_name(actor) {
+        return actor?.name ?? actor?.Name ?? String(actor ?? "");
+      }
+
+      const lastRound = get_last_round(ctx);
+
+      if (!lastRound) {
+        console.error("No previous rounds found to export.");
+        await emit_update(_name, { phase: "export.no_previous_round" });
+        await emit_ready(_name);
+        return;
+      }
+
+      const round = create_round_from_last(ctx, _name, lastRound);
+      const actors = round.actors || get_actors(ctx) || [];
+
+      const usePromptHint = bool_prop(props.UsePromptHint ?? props.usePromptHint, false);
+      const promptHint = typeof get_prompt_hint === "function"
+        ? get_prompt_hint(ctx)
+        : String(ctx?.conversation?.promptHint ?? ctx?.conversation?.PromptHint ?? "");
+
+      const prefix = usePromptHint && String(promptHint ?? "").trim()
+        ? await create_export_prefix_from_prompt_hint(promptHint)
+        : str(props.Prefix ?? props.prefix, "");
+
+      const exportPath = str(
+        props.ExportPath ?? props.exportPath,
+        "\\Projects\\AI\\Lokipai\\LokiProjects\\Export"
+      );
+
+      const multipleFiles = bool_prop(props.MultipleFiles ?? props.multipleFiles, false);
+      const fileType = str(props.FileType ?? props.fileType, "txt").replace(/^\.+/, "") || "txt";
+
+      await ensure_export_directory(exportPath);
+
+      await emit_update(_name, {
+        phase: "export.started",
+        exportPath,
+        multipleFiles,
+        fileType,
+        actorCount: actors.length,
+      });
+
+      if (multipleFiles) {
+        for (const actor of actors) {
+          const result = await export_actor_responses(ctx, {
+            round: lastRound,
+            actor,
+            exportPath,
+            prefix,
+            fileType,
+          });
+
+          console.log(`Exported responses to ${result.filePath}`);
+          await emit_update(_name, {
+            phase: "export.actor_written",
+            actor: actor_name(actor),
+            filePath: result.filePath,
+          });
+        }
+      } else {
+        const result = await export_all_responses(ctx, {
+          round: lastRound,
+          actors,
+          exportPath,
+          prefix,
+          fileType,
+        });
+
+        console.log(`Exported all responses to ${result.filePath}`);
+        await emit_update(_name, {
+          phase: "export.all_written",
+          filePath: result.filePath,
+        });
+      }
+
+      // Match C# Export.ExecuteAsync: small hold while IO settles.
+      if (typeof delay === "function") await delay(1150);
+      else await new Promise(resolve => setTimeout(resolve, 1150));
+
+      await emit_update(_name);
+      await emit_ready(_name);
+
+      await fn6_End(ctx);
+    } catch (ex) {
+      console.error(`Error in ${_name}:`, ex);
+      throw ex;
+    } finally {
+    }
+    return;
+
+  }
+
+  async function fn6_End(ctx) {
+    /* End - Terminal for LLM completion of flow. */
+    var _name = "End";
+    console.log("End: End");
+    await emit_process(_name);
+
+    try {
+      set_active_node(ctx, _name);
+      await emit_update(_name);
+
+      const lastRound = get_last_round(ctx);
+      create_round(ctx, _name, lastRound);
+
+      // Mirrors C#:
+      // foreach (INode node in Conversation.ProcessNodes) node.Reset();
+      // In compiled JS, node-local reset behavior is represented by ctx.nodeState.
+      // Keep this conservative: clear nodeState only if present.
+      if (ctx?.nodeState && typeof ctx.nodeState === "object") {
+        ctx.nodeState = {};
+      }
+
+      const b = node_blurbs(_name) || {};
+      const complete = String(b?.Complete ?? b?.complete ?? "");
+      if (complete) console.log(complete);
+
+      await emit_update(_name);
+      await emit_ready(_name);
+    } finally {
+    }
+    return ctx;
+
+  }
+
+  return { info, getInformation, getRuntime, execute, continue: cont };
+}

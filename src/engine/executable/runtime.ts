@@ -1,4 +1,6 @@
 // src\engine\executable\runtime.ts
+import path from "node:path";
+import { promises as fs } from "node:fs";
   import type {
     ExecutableActorRef,
     ExecutableCtxState,
@@ -16,6 +18,17 @@
     type McpToolResult,
   } from "../../tools/mcp/mcp-streamable-client.js";
 import { getProviderFromModel } from "../../shared/provider-resolver.js";
+import {
+  addTimestampToFileName,
+  convertToFileNameCompatible,
+  createLoadPrompt,
+  getFilenames,
+  getLoadPassingToBlurb,
+  loadFilesForActors,
+  waitForFiles,
+  writeActorResponsesToFile,
+  writeAllResponsesToFile,
+} from "../../tools/files/file-helper.js";
 
   export interface ExecutableRuntimeDeps {
     emitter: RuntimeEmitter;
@@ -210,6 +223,309 @@ import { getProviderFromModel } from "../../shared/provider-resolver.js";
     return s === "true" || s === "1" || s === "yes" || s === "y";
   }
 
+  async function directory_exists(directoryPath: string): Promise<boolean> {
+    try {
+      const stat = await fs.stat(directoryPath);
+      return stat.isDirectory();
+    } catch {
+      return false;
+    }
+  }
+
+  async function get_load_filenames(
+    importPath: string,
+    filter = "*.*",
+  ): Promise<Array<[string, string]>> {
+    return getFilenames(importPath, filter, false);
+  }
+
+  async function wait_for_load_files(
+    importPath: string,
+    filter = "*.*",
+    options: { pollMs?: number; ctx?: any; nodeName?: string } = {},
+  ): Promise<Array<[string, string]>> {
+    const signal = options.ctx?.abortController?.signal ?? options.ctx?.signal;
+    return waitForFiles(importPath, filter, {
+      pollMs: options.pollMs ?? 5000,
+      signal,
+    });
+  }
+
+  async function load_files_for_actors(
+    _ctx: ExecutableCtxState,
+    args: {
+      nodeName?: string;
+      round: ExecutableRound;
+      actors: ExecutableActorRef[];
+      filesList: Array<[string, string]>;
+      importPath: string;
+      rawMode?: boolean;
+      from?: unknown;
+      moveToHistory?: boolean;
+    },
+  ): Promise<Map<ExecutableActorRef, string[]>> {
+    const promptsByActor = await loadFilesForActors(args.filesList, args.actors, {
+      importPath: args.importPath,
+      rawMode: args.rawMode ?? false,
+      moveToHistory: args.moveToHistory ?? true,
+      from: args.from,
+    });
+
+    return promptsByActor as Map<ExecutableActorRef, string[]>;
+  }
+
+  function create_load_prompt(nodeBlurbs?: any): string {
+    const direct = nodeBlurbs?.LoadPrompt ?? nodeBlurbs?.loadPrompt;
+    if (typeof direct === "string" && direct.trim()) return direct;
+    return createLoadPrompt({ Conversation: { Load: nodeBlurbs ?? {} } });
+  }
+
+  function get_load_passing_to_blurb(nodeBlurbs?: any): string {
+    const direct =
+      nodeBlurbs?.PassingTo ??
+      nodeBlurbs?.passingTo ??
+      nodeBlurbs?.LoadTo ??
+      nodeBlurbs?.loadTo;
+
+    if (typeof direct === "string" && direct.trim()) return direct;
+    return getLoadPassingToBlurb({ Conversation: { Load: nodeBlurbs ?? {} } });
+  }
+
+  async function ensure_export_directory(exportPath: string): Promise<void> {
+    await fs.mkdir(exportPath, { recursive: true });
+  }
+
+  function get_prompt_hint(ctx: any): string {
+    return String(
+      ctx?.conversation?.promptHint ??
+        ctx?.conversation?.PromptHint ??
+        ctx?.PromptHint ??
+        "",
+    );
+  }
+
+  async function create_export_prefix_from_prompt_hint(
+    promptHint: string,
+  ): Promise<string> {
+    const cleaned = convertToFileNameCompatible(promptHint);
+    return cleaned ? `${cleaned}_` : "";
+  }
+
+  function get_export_suppress_file_narration(ctx: any): boolean {
+    const direct =
+      ctx?.settings?.Export?.SuppressFileNarration ??
+      ctx?.settings?.export?.suppressFileNarration ??
+      ctx?.conversation?.settings?.Export?.SuppressFileNarration ??
+      ctx?.conversation?.settings?.export?.suppressFileNarration ??
+      ctx?.conversation?.LOKIPAI?.Settings?.[
+        "Settings.Library.Models.Conversation.Export.SuppressFileNarration"
+      ] ??
+      false;
+
+    return readBool(direct, false);
+  }
+
+  function get_actor_name(actor: any): string {
+    return String(actor?.name ?? actor?.Name ?? actor?.id ?? actor?.Id ?? "").trim();
+  }
+
+  function get_reasoning_actor(ctx: any): any | null {
+    return (
+      ctx?.conversation?.reasoning ??
+      ctx?.conversation?.Reasoning ??
+      ctx?.reasoning ??
+      null
+    );
+  }
+
+  function collect_rounds(value: any): any[] {
+    if (!value) return [];
+    if (Array.isArray(value)) return value;
+    const rounds = value?.rounds ?? value?.Rounds;
+    return Array.isArray(rounds) ? rounds : [value];
+  }
+
+  function response_text(response: any): string {
+    return String(
+      response?.apiResponse?.response ??
+        response?.apiResponse?.Response ??
+        response?.ApiResponse?.Response ??
+        response?.response ??
+        response?.Response ??
+        response?.text ??
+        response?.Text ??
+        "",
+    );
+  }
+
+  function get_response_actor_name(response: any): string {
+    return get_actor_name(response?.from ?? response?.From);
+  }
+
+  function find_last_useful_response(
+    roundish: any,
+    actor: any,
+  ): { text: string; sequenceId: number } | null {
+    const actorName = get_actor_name(actor).toLowerCase();
+    if (!actorName) return null;
+
+    const rounds = collect_rounds(roundish);
+    let sequenceId = 0;
+    const matches: Array<{ text: string; sequenceId: number }> = [];
+
+    for (const round of rounds) {
+      const utterances = round?.utterances ?? round?.Utterances ?? [];
+      if (!Array.isArray(utterances)) continue;
+
+      for (const utterance of utterances) {
+        const utteranceSeq = Number(
+          utterance?.sequenceId ??
+            utterance?.SequenceId ??
+            utterance?.sequence ??
+            utterance?.Sequence ??
+            sequenceId,
+        );
+
+        const responses = utterance?.responses ?? utterance?.Responses ?? [];
+        if (Array.isArray(responses)) {
+          for (const response of responses) {
+            const text = response_text(response).trim();
+            if (!text) continue;
+
+            const fromName = get_response_actor_name(response).toLowerCase();
+            if (fromName === actorName) {
+              matches.push({ text, sequenceId: utteranceSeq });
+            }
+          }
+        }
+
+        const text = response_text(utterance).trim();
+        if (text) {
+          const fromName = get_actor_name(utterance?.from ?? utterance?.From).toLowerCase();
+          const toName = get_actor_name(utterance?.to ?? utterance?.To).toLowerCase();
+          const utteranceActorName = get_actor_name(
+            utterance?.actor ?? utterance?.Actor,
+          ).toLowerCase();
+
+          if (
+            fromName === actorName ||
+            toName === actorName ||
+            utteranceActorName === actorName
+          ) {
+            matches.push({ text, sequenceId: utteranceSeq });
+          }
+        }
+
+        sequenceId++;
+      }
+    }
+
+    return matches.length ? matches[matches.length - 1] : null;
+  }
+
+  function get_last_useful_utterance_response(
+    _ctx: any,
+    roundish: any,
+    actor: any,
+  ): string {
+    return find_last_useful_response(roundish, actor)?.text ?? "";
+  }
+
+  function get_last_useful_utterance_response_sequence_id(
+    roundish: any,
+    actor: any,
+  ): number {
+    return find_last_useful_response(roundish, actor)?.sequenceId ?? -1;
+  }
+
+  function get_consolidated_export_response(ctx: any): string {
+    return String(
+      ctx?.conversation?.unifiedResponse ??
+        ctx?.conversation?.UnifiedResponse ??
+        ctx?.vars?.unifiedResponse ??
+        ctx?.vars?.UnifiedResponse ??
+        ctx?.unifiedResponse ??
+        ctx?.UnifiedResponse ??
+        "",
+    ).trim();
+  }
+
+  async function export_actor_responses(
+    ctx: ExecutableCtxState,
+    args: {
+      round: ExecutableRound;
+      actor: ExecutableActorRef;
+      exportPath: string;
+      prefix?: string;
+      fileType?: string;
+    },
+  ): Promise<{ fileName: string; filePath: string }> {
+    const actorName = get_actor_name(args.actor) || "Actor";
+    const fileName = addTimestampToFileName(
+      `${args.prefix ?? ""}${actorName}_response`,
+      args.fileType ?? "txt",
+    );
+    const filePath = path.join(args.exportPath, fileName);
+
+    await writeActorResponsesToFile({
+      round: args.round,
+      actor: args.actor,
+      filePath,
+      getActorName: get_actor_name,
+      getLastUsefulUtteranceResponse: (_round, actor) =>
+        get_last_useful_utterance_response(ctx, ctx.conversation?.rounds, actor),
+    });
+
+    return { fileName, filePath };
+  }
+
+  async function export_all_responses(
+    ctx: ExecutableCtxState,
+    args: {
+      round: ExecutableRound;
+      actors: ExecutableActorRef[];
+      exportPath: string;
+      prefix?: string;
+      fileType?: string;
+    },
+  ): Promise<{ fileName: string; filePath: string }> {
+    const fileName = addTimestampToFileName(
+      `${args.prefix ?? ""}AllResponses`,
+      args.fileType ?? "txt",
+    );
+    const filePath = path.join(args.exportPath, fileName);
+    const reasoning = get_reasoning_actor(ctx);
+    const consolidatedResponse = get_consolidated_export_response(ctx);
+
+    if (consolidatedResponse) {
+      await fs.writeFile(filePath, `${consolidatedResponse}\n`, "utf8");
+      return { fileName, filePath };
+    }
+
+    await writeAllResponsesToFile({
+      conversation: ctx?.conversation ?? ctx,
+      round: args.round,
+      actors: args.actors ?? [],
+      filePath,
+      reasoning,
+      suppressFileNarration: get_export_suppress_file_narration(ctx),
+      getActorName: get_actor_name,
+      getLastUsefulUtteranceResponse: (_conversation, actor) =>
+        get_last_useful_utterance_response(ctx, ctx.conversation?.rounds, actor),
+      getLastUsefulUtteranceResponseSequenceId: (_round, actor) =>
+        get_last_useful_utterance_response_sequence_id(
+          ctx.conversation?.rounds,
+          actor,
+        ),
+    });
+
+    return { fileName, filePath };
+  }
+
+  async function delay(ms: number): Promise<void> {
+    await new Promise<void>((resolve) => setTimeout(resolve, ms));
+  }
+
   async function get_available_tools_for_mcp_node(
     _ctx: ExecutableCtxState,
     nodeName: string,
@@ -383,6 +699,53 @@ console.log("get_available_tools_for_mcp_node tools:", {
     ): { label: string; help: string; key: string };
 
     clear_embeds(ctx: ExecutableCtxState): void;
+
+    directory_exists(directoryPath: string): Promise<boolean>;
+    get_load_filenames(importPath: string, filter?: string): Promise<Array<[string, string]>>;
+    wait_for_load_files(
+      importPath: string,
+      filter?: string,
+      options?: { pollMs?: number; ctx?: any; nodeName?: string },
+    ): Promise<Array<[string, string]>>;
+    load_files_for_actors(
+      ctx: ExecutableCtxState,
+      args: {
+        nodeName?: string;
+        round: ExecutableRound;
+        actors: ExecutableActorRef[];
+        filesList: Array<[string, string]>;
+        importPath: string;
+        rawMode?: boolean;
+        from?: unknown;
+        moveToHistory?: boolean;
+      },
+    ): Promise<Map<ExecutableActorRef, string[]>>;
+    create_load_prompt(nodeBlurbs?: any): string;
+    get_load_passing_to_blurb(nodeBlurbs?: any): string;
+    get_prompt_hint(ctx: ExecutableCtxState): string;
+    create_export_prefix_from_prompt_hint(promptHint: string): Promise<string>;
+    ensure_export_directory(exportPath: string): Promise<void>;
+    export_actor_responses(
+      ctx: ExecutableCtxState,
+      args: {
+        round: ExecutableRound;
+        actor: ExecutableActorRef;
+        exportPath: string;
+        prefix?: string;
+        fileType?: string;
+      },
+    ): Promise<{ fileName: string; filePath: string }>;
+    export_all_responses(
+      ctx: ExecutableCtxState,
+      args: {
+        round: ExecutableRound;
+        actors: ExecutableActorRef[];
+        exportPath: string;
+        prefix?: string;
+        fileType?: string;
+      },
+    ): Promise<{ fileName: string; filePath: string }>;
+    delay(ms: number): Promise<void>;
 
     get_available_tools_for_mcp_node(
       ctx: ExecutableCtxState,
@@ -752,6 +1115,30 @@ console.log("get_available_tools_for_mcp_node tools:", {
       call_mcp_tool,
 
       inject_available_tools_into_prompt,      
+
+      directory_exists,
+
+      get_load_filenames,
+
+      wait_for_load_files,
+
+      load_files_for_actors,
+
+      create_load_prompt,
+
+      get_load_passing_to_blurb,
+
+      get_prompt_hint,
+
+      create_export_prefix_from_prompt_hint,
+
+      ensure_export_directory,
+
+      export_actor_responses,
+
+      export_all_responses,
+
+      delay,
 
       clear_embeds(ctx: ExecutableCtxState): void {
         (ctx as ExecutableCtxState & { embeds?: unknown[] }).embeds = [];
