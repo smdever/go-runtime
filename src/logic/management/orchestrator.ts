@@ -52,10 +52,10 @@ export class Orchestrator implements IOrchestratorLike {
         error?: string;
       };
 
-      console.log("Orchestrator worker message:", {
-        runId: data.runId ?? this.submission.runId,
-        type: data.type,
-      });
+      // console.log("Orchestrator worker message:", {
+      //   runId: data.runId ?? this.submission.runId,
+      //   type: data.type,
+      // });
             
       if (data.type === "worker.snapshot" && data.snapshot) {
         this.lastSnapshot = data.snapshot;
